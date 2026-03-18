@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡易度數計算器</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f7f6; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #333; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        input:read-only { background-color: #eee; color: #777; cursor: not-allowed; }
+        .result-area { margin-top: 20px; padding-top: 15px; border-top: 2px solid #eee; }
+        button { width: 100%; padding: 12px; background-color: #ff4d4d; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        button:hover { background-color: #ff3333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>度數費用試算</h2>
+    
+    <div class="input-group">
+        <label>上期度數 (a)</label>
+        <input type="text" id="a" placeholder="請輸入數字" oninput="validateAndCalc(this)">
+    </div>
+    
+    <div class="input-group">
+        <label>本期度數 (b)</label>
+        <input type="text" id="b" placeholder="請輸入數字" oninput="validateAndCalc(this)">
+    </div>
+    
+    <div class="input-group">
+        <label>每度金額 (c)</label>
+        <input type="text" id="c" placeholder="可輸入小數點" oninput="validateAndCalc(this, true)">
+    </div>
+
+    <div class="result-area">
+        <div class="input-group">
+            <label>使用度數 (cnt)</label>
+            <input type="text" id="cnt" value="0" readonly>
+        </div>
+        
+        <div class="input-group">
+            <label>應收金額 (res)</label>
+            <input type="text" id="res" value="0" readonly>
+        </div>
+    </div>
+
+    <button onclick="clearFields()">清除數值 (保留單價)</button>
+</div>
+
+<script>
+    function validateAndCalc(el, allowDecimal = false) {
+        // 僅允許輸入數字 (若 allowDecimal 為 true 則允許一個小數點)
+        if (allowDecimal) {
+            el.value = el.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+        } else {
+            el.value = el.value.replace(/[^0-9]/g, '');
+        }
+        
+        calculate();
+    }
+
+    function calculate() {
+        // 取得輸入值，若為空則視為 0
+        const a = parseFloat(document.getElementById('a').value) || 0;
+        const b = parseFloat(document.getElementById('b').value) || 0;
+        const c = parseFloat(document.getElementById('c').value) || 0;
+
+        // 計算 cnt = b - a
+        const cnt = b - a;
+        document.getElementById('cnt').value = cnt;
+
+        // 計算 res = (b - a) * c 並四捨五入
+        const res = Math.round(cnt * c);
+        document.getElementById('res').value = res >= 0 ? res : 0; // 避免出現負數金額
+    }
+
+    function clearFields() {
+        document.getElementById('a').value = '';
+        document.getElementById('b').value = '';
+        document.getElementById('cnt').value = '0';
+        document.getElementById('res').value = '0';
+    }
+</script>
+
+</body>
+</html>
